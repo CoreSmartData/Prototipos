@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Búsqueda de CFDI - SIEEG</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="/css/styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Barra de navegación -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <img src="/img/sieeglogo.jpg" alt="SIEEG" height="30" class="d-inline-block align-text-top">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/buscar-cfdi">Buscar CFDI</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/crear-cfdi">Crear CFDI</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <div class="main-container">
+        <!-- Tabs de búsqueda -->
+        <ul class="nav nav-tabs mb-4" id="searchTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="rfc-tab" data-bs-toggle="tab" data-bs-target="#rfc" type="button" role="tab">
+                    Búsqueda por RFC
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="uuid-tab" data-bs-toggle="tab" data-bs-target="#uuid" type="button" role="tab">
+                    Búsqueda por UUID
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="folio-tab" data-bs-toggle="tab" data-bs-target="#folio" type="button" role="tab">
+                    Búsqueda por Folio
+                </button>
+            </li>
+        </ul>
+
+        <!-- Contenido de los tabs -->
+        <div class="tab-content" id="searchTabsContent">
+            <!-- Tab RFC -->
+            <div class="tab-pane fade show active" id="rfc" role="tabpanel">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="responsive-heading mb-0">Búsqueda por RFC</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="rfcForm" data-search-type="rfc">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label for="rfcMonthSelect" class="form-label">Mes</label>
+                                    <select id="rfcMonthSelect" class="form-select month-selector" required>
+                                        <option value="">Seleccionar mes</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="rfcYearSelect" class="form-label">Año</label>
+                                    <select id="rfcYearSelect" class="form-select year-selector" required>
+                                        <option value="">Seleccionar año</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="rfcInput" class="form-label">RFC</label>
+                                    <input type="text" class="form-control" id="rfcInput" required 
+                                           pattern="^[A-ZÑ&]{3,4}[0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])[A-Z0-9]{2}[0-9A]$"
+                                           placeholder="Ej: XAXX010101000">
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-search"></i> Buscar
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab UUID -->
+            <div class="tab-pane fade" id="uuid" role="tabpanel">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="responsive-heading mb-0">Búsqueda por UUID</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="uuidForm" data-search-type="uuid">
+                            <div class="row g-3">
+                                <div class="col-md-12">
+                                    <label for="uuidInput" class="form-label">UUID</label>
+                                    <input type="text" class="form-control" id="uuidInput" required
+                                           pattern="^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+                                           placeholder="Ej: a1b2c3d4-e5f6-g7h8-i9j0-k1l2m3n4o5p6">
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-search"></i> Buscar
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Folio -->
+            <div class="tab-pane fade" id="folio" role="tabpanel">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="responsive-heading mb-0">Búsqueda por Folio</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="folioForm" data-search-type="folio">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="serieInput" class="form-label">Serie</label>
+                                    <input type="text" class="form-control" id="serieInput" required
+                                           placeholder="Ej: A">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="folioInput" class="form-label">Folio</label>
+                                    <input type="text" class="form-control" id="folioInput" required
+                                           placeholder="Ej: 12345">
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-search"></i> Buscar
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenedor de resultados -->
+        <div id="searchResults" class="mt-4">
+            <div class="alert alert-info">
+                Los resultados de la búsqueda aparecerán aquí
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <small class="responsive-text">&copy; 2025 SIEEG - Electrónica</small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/buscar-cfdi.js"></script>
+</body>
+</html> 
