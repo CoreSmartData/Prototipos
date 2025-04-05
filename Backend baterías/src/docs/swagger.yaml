@@ -1,0 +1,191 @@
+openapi: 3.0.0
+info:
+  title: Sistema de Gestión de Inventario y Ventas
+  description: API para la gestión de inventario, ventas y créditos de una empresa de baterías
+  version: 1.0.0
+  contact:
+    email: soporte@empresa.com
+
+servers:
+  - url: http://localhost:3000/api
+    description: Servidor de desarrollo
+
+components:
+  schemas:
+    Categoria:
+      type: object
+      properties:
+        id_categoria:
+          type: integer
+        nombre:
+          type: string
+        descripcion:
+          type: string
+        activo:
+          type: boolean
+
+    UnidadMedida:
+      type: object
+      properties:
+        id_unidad:
+          type: integer
+        nombre:
+          type: string
+        abreviatura:
+          type: string
+        activo:
+          type: boolean
+
+    Producto:
+      type: object
+      properties:
+        id_producto:
+          type: integer
+        codigo:
+          type: string
+        nombre:
+          type: string
+        descripcion:
+          type: string
+        precio_compra:
+          type: number
+        precio_venta:
+          type: number
+        stock_minimo:
+          type: integer
+        activo:
+          type: boolean
+        categoria:
+          $ref: '#/components/schemas/Categoria'
+        unidad_medida:
+          $ref: '#/components/schemas/UnidadMedida'
+
+    Inventario:
+      type: object
+      properties:
+        id_inventario:
+          type: integer
+        stock:
+          type: integer
+        producto:
+          $ref: '#/components/schemas/Producto'
+        sucursal:
+          $ref: '#/components/schemas/Sucursal'
+
+    Venta:
+      type: object
+      properties:
+        id_venta:
+          type: integer
+        fecha:
+          type: string
+          format: date-time
+        total:
+          type: number
+        cliente:
+          $ref: '#/components/schemas/Cliente'
+        sucursal:
+          $ref: '#/components/schemas/Sucursal'
+        tipo_pago:
+          $ref: '#/components/schemas/TipoPago'
+        detalles:
+          type: array
+          items:
+            $ref: '#/components/schemas/DetalleVenta'
+
+paths:
+  /categorias:
+    get:
+      summary: Obtener todas las categorías
+      responses:
+        '200':
+          description: Lista de categorías
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Categoria'
+    post:
+      summary: Crear una nueva categoría
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Categoria'
+      responses:
+        '201':
+          description: Categoría creada exitosamente
+
+  /productos:
+    get:
+      summary: Obtener todos los productos
+      responses:
+        '200':
+          description: Lista de productos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Producto'
+    post:
+      summary: Crear un nuevo producto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Producto'
+      responses:
+        '201':
+          description: Producto creado exitosamente
+
+  /ventas:
+    get:
+      summary: Obtener todas las ventas
+      responses:
+        '200':
+          description: Lista de ventas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Venta'
+    post:
+      summary: Crear una nueva venta
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Venta'
+      responses:
+        '201':
+          description: Venta creada exitosamente
+
+  /inventario:
+    get:
+      summary: Obtener todo el inventario
+      responses:
+        '200':
+          description: Lista de inventario
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Inventario'
+    post:
+      summary: Crear un nuevo registro de inventario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Inventario'
+      responses:
+        '201':
+          description: Registro de inventario creado exitosamente 
