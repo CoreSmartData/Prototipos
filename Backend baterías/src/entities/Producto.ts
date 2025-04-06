@@ -32,6 +32,9 @@ export class Producto {
   @Column({ default: true })
   activo!: boolean;
 
+  @Column('decimal', { precision: 10, scale: 2, default: 0 })
+  stock_minimo!: number;
+
   @ManyToOne(() => UnidadMedida, unidadMedida => unidadMedida.productos)
   @JoinColumn({ name: 'id_unidad' })
   unidadMedida!: UnidadMedida;

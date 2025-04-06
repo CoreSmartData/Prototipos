@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { Venta } from './Venta';
 import { Credito } from './Credito';
 
@@ -11,32 +11,25 @@ export class Cliente {
   nombre!: string;
 
   @Column()
-  direccion!: string;
+  apellido!: string;
 
-  @Column()
-  telefono!: string;
-
-  @Column()
+  @Column({ unique: true })
   email!: string;
 
-  @Column()
-  rfc!: string;
+  @Column({ nullable: true })
+  telefono!: string;
 
-  @Column({
-    type: 'enum',
-    enum: ['normal', 'credito'],
-    default: 'normal'
-  })
-  tipo_cliente!: 'normal' | 'credito';
-
-  @Column('decimal', { precision: 10, scale: 2 })
-  limite_credito!: number;
-
-  @Column('decimal', { precision: 10, scale: 2, default: 0 })
-  saldo_actual!: number;
+  @Column({ nullable: true })
+  direccion!: string;
 
   @Column({ default: true })
   activo!: boolean;
+
+  @CreateDateColumn()
+  fechaCreacion!: Date;
+
+  @UpdateDateColumn()
+  fechaActualizacion!: Date;
 
   @OneToMany(() => Venta, venta => venta.cliente)
   ventas!: Venta[];

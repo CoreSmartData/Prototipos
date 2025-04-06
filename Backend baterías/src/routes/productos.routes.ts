@@ -6,7 +6,8 @@ import {
   updateProducto,
   deleteProducto,
   getProductosByCategoria,
-  getProductosActivos
+  getProductosActivos,
+  updateStock
 } from '../controllers/productos.controller';
 
 const router = Router();
@@ -18,5 +19,6 @@ router.get('/:id', getProductoById);
 router.post('/', createProducto);
 router.put('/:id', updateProducto);
 router.delete('/:id', deleteProducto);
+router.patch('/:id/stock', updateStock);
 
-export default router; 
+export const productosRouter = router; 

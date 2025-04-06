@@ -15,4 +15,4 @@ router.post('/', createCategoria);
 router.put('/:id', updateCategoria);
 router.delete('/:id', deleteCategoria);
 
-export default router; 
+export const categoriasRouter = router; 

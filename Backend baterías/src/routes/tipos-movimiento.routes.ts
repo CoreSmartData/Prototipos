@@ -15,4 +15,4 @@ router.post('/', createTipoMovimiento);
 router.put('/:id', updateTipoMovimiento);
 router.delete('/:id', deleteTipoMovimiento);
 
-export default router; 
+export const tiposMovimientoRouter = router; 

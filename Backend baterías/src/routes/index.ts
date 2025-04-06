@@ -1,23 +1,27 @@
 import { Router } from 'express';
-import categoriasRoutes from './categorias.routes';
-import unidadesMedidaRoutes from './unidades-medida.routes';
-import productosRoutes from './productos.routes';
-import inventarioRoutes from './inventario.routes';
-import tiposPagoRoutes from './tipos-pago.routes';
-import ventasRoutes from './ventas.routes';
-import tiposMovimientoRoutes from './tipos-movimiento.routes';
-import movimientosInventarioRoutes from './movimientos-inventario.routes';
+import { categoriasRouter } from './categorias.routes';
+import { unidadesMedidaRouter } from './unidades-medida.routes';
+import { productosRouter } from './productos.routes';
+import { inventarioRouter } from './inventario.routes';
+import { tiposPagoRouter } from './tipos-pago.routes';
+import { ventasRouter } from './ventas.routes';
+import { tiposMovimientoRouter } from './tipos-movimiento.routes';
+import { movimientosInventarioRouter } from './movimientos-inventario.routes';
+import { sucursalesRouter } from './sucursales.routes';
+import { clientesRouter } from './clientes.routes';
 
 const router = Router();
 
 // Registro de rutas
-router.use('/categorias', categoriasRoutes);
-router.use('/unidades-medida', unidadesMedidaRoutes);
-router.use('/productos', productosRoutes);
-router.use('/inventario', inventarioRoutes);
-router.use('/tipos-pago', tiposPagoRoutes);
-router.use('/ventas', ventasRoutes);
-router.use('/tipos-movimiento', tiposMovimientoRoutes);
-router.use('/movimientos-inventario', movimientosInventarioRoutes);
+router.use('/categorias', categoriasRouter);
+router.use('/unidades-medida', unidadesMedidaRouter);
+router.use('/productos', productosRouter);
+router.use('/inventario', inventarioRouter);
+router.use('/tipos-pago', tiposPagoRouter);
+router.use('/ventas', ventasRouter);
+router.use('/tipos-movimiento', tiposMovimientoRouter);
+router.use('/movimientos-inventario', movimientosInventarioRouter);
+router.use('/sucursales', sucursalesRouter);
+router.use('/clientes', clientesRouter);
 
 export default router; 

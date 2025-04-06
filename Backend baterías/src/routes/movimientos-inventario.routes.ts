@@ -17,4 +17,4 @@ router.get('/fecha', getMovimientosByFecha);
 router.get('/:id', getMovimientoInventarioById);
 router.post('/', createMovimientoInventario);
 
-export default router; 
+export const movimientosInventarioRouter = router; 

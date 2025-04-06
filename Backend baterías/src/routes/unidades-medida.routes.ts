@@ -15,4 +15,4 @@ router.post('/', createUnidadMedida);
 router.put('/:id', updateUnidadMedida);
 router.delete('/:id', deleteUnidadMedida);
 
-export default router; 
+export const unidadesMedidaRouter = router; 

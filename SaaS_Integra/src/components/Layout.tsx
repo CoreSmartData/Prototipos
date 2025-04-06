@@ -2,19 +2,19 @@ import { useState } from 'react';
 import {
   HomeIcon,
   UsersIcon,
-  ShoppingBagIcon,
   ShoppingCartIcon,
   ClipboardDocumentListIcon,
   DocumentTextIcon,
   XMarkIcon,
   Bars3Icon,
+  CubeIcon,
 } from '@heroicons/react/24/outline';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import logo from '../assets/core-logo.png';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: HomeIcon },
-  { name: 'Inventario', href: '/inventory', icon: ShoppingBagIcon },
+  { name: 'Productos', href: '/productos', icon: CubeIcon },
   { name: 'Ventas', href: '/sales', icon: ShoppingCartIcon },
   { name: 'Pedidos', href: '/orders', icon: ClipboardDocumentListIcon },
   { name: 'Compras', href: '/purchases', icon: DocumentTextIcon },

@@ -2,46 +2,44 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
-import { createConnection } from 'typeorm';
-import { sucursalesRouter } from './routes/sucursales.routes';
-import { productosRouter } from './routes/productos.routes';
-import { clientesRouter } from './routes/clientes.routes';
-import { ventasRouter } from './routes/ventas.routes';
-import { inventarioRouter } from './routes/inventario.routes';
+import { AppDataSource } from './config/database';
+import router from './routes';
 import { errorHandler } from './middleware/error.middleware';
 
 // Cargar variables de entorno
 dotenv.config();
 
 const app = express();
+const port = process.env.PORT || 3000;
+
+// Configuración de CORS
+app.use(cors({
+  origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
 
 // Middleware
-app.use(helmet());
-app.use(cors());
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" }
+}));
 app.use(express.json());
 
 // Rutas
-app.use('/api/sucursales', sucursalesRouter);
-app.use('/api/productos', productosRouter);
-app.use('/api/clientes', clientesRouter);
-app.use('/api/ventas', ventasRouter);
-app.use('/api/inventario', inventarioRouter);
+app.use('/api', router);
 
 // Manejador de errores
 app.use(errorHandler);
 
 // Iniciar servidor
-const PORT = process.env.PORT || 3000;
-
 const startServer = async () => {
   try {
-    // Conexión a la base de datos
-    await createConnection();
+    await AppDataSource.initialize();
     console.log('Conexión a la base de datos establecida');
 
-    // Iniciar servidor
-    app.listen(PORT, () => {
-      console.log(`Servidor corriendo en el puerto ${PORT}`);
+    app.listen(port, () => {
+      console.log(`Servidor corriendo en el puerto ${port}`);
     });
   } catch (error) {
     console.error('Error al iniciar el servidor:', error);

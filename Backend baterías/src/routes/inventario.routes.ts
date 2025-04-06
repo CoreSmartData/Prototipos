@@ -19,4 +19,4 @@ router.post('/', createInventario);
 router.put('/:productoId/sucursal/:sucursalId/stock', updateStock);
 router.put('/:productoId/sucursal/:sucursalId/ajuste', ajustarStock);
 
-export default router; 
+export const inventarioRouter = router; 

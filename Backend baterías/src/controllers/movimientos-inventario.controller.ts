@@ -74,6 +74,10 @@ export const createMovimientoInventario = async (req: Request, res: Response, ne
     // Actualizar el inventario
     const tipoMovimiento = await AppDataSource.getRepository('tipos_movimiento').findOneBy({ id_tipo_movimiento });
     
+    if (!tipoMovimiento) {
+      throw new AppError(`Tipo de movimiento con ID ${id_tipo_movimiento} no encontrado`, 404);
+    }
+    
     if (tipoMovimiento.tipo === 'entrada') {
       inventario.stock += cantidad;
     } else {

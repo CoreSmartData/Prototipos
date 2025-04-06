@@ -17,4 +17,4 @@ router.get('/fecha', getVentasByFecha);
 router.get('/:id', getVentaById);
 router.post('/', createVenta);
 
-export default router; 
+export const ventasRouter = router; 
