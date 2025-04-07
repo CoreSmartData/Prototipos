@@ -9,6 +9,7 @@ import { tiposMovimientoRouter } from './tipos-movimiento.routes';
 import { movimientosInventarioRouter } from './movimientos-inventario.routes';
 import { sucursalesRouter } from './sucursales.routes';
 import { clientesRouter } from './clientes.routes';
+import usuariosRouter from './usuarios.routes';
 
 const router = Router();
 
@@ -23,5 +24,6 @@ router.use('/tipos-movimiento', tiposMovimientoRouter);
 router.use('/movimientos-inventario', movimientosInventarioRouter);
 router.use('/sucursales', sucursalesRouter);
 router.use('/clientes', clientesRouter);
+router.use('/usuarios', usuariosRouter);
 
 export default router; 

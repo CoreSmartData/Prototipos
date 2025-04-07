@@ -22,13 +22,13 @@ export class Cliente {
   @Column({ nullable: true })
   direccion!: string;
 
-  @Column({ default: true })
+  @Column({ type: 'tinyint', default: 1 })
   activo!: boolean;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'fechaCreacion', type: 'datetime', precision: 6 })
   fechaCreacion!: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: 'fechaActualizacion', type: 'datetime', precision: 6 })
   fechaActualizacion!: Date;
 
   @OneToMany(() => Venta, venta => venta.cliente)

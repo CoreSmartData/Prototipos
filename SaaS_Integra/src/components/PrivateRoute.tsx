@@ -1,9 +1,9 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { ReactNode } from 'react';
 
 interface PrivateRouteProps {
-  children: ReactNode;
+  children?: ReactNode;
 }
 
 export default function PrivateRoute({ children }: PrivateRouteProps) {
@@ -13,5 +13,6 @@ export default function PrivateRoute({ children }: PrivateRouteProps) {
     return <Navigate to="/login" replace />;
   }
 
-  return <>{children}</>;
+  // Si se proporcionan children, renderizarlos, de lo contrario usar Outlet
+  return children ? <>{children}</> : <Outlet />;
 } 

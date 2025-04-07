@@ -1,8 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { Inventario } from './Inventario';
 import { Venta } from './Venta';
-import { Traspaso } from './Traspaso';
+import { Inventario } from './Inventario';
 import { MovimientoInventario } from './MovimientoInventario';
+import { Traspaso } from './Traspaso';
 
 @Entity('sucursales')
 export class Sucursal {
@@ -21,21 +21,21 @@ export class Sucursal {
   @Column()
   responsable!: string;
 
-  @Column({ default: true })
+  @Column({ type: 'tinyint', default: 1 })
   activo!: boolean;
+
+  @OneToMany(() => Venta, venta => venta.sucursal)
+  ventas!: Venta[];
 
   @OneToMany(() => Inventario, inventario => inventario.sucursal)
   inventarios!: Inventario[];
 
-  @OneToMany(() => Venta, venta => venta.sucursal)
-  ventas!: Venta[];
+  @OneToMany(() => MovimientoInventario, movimiento => movimiento.sucursal)
+  movimientos!: MovimientoInventario[];
 
   @OneToMany(() => Traspaso, traspaso => traspaso.sucursalOrigen)
   traspasosOrigen!: Traspaso[];
 
   @OneToMany(() => Traspaso, traspaso => traspaso.sucursalDestino)
   traspasosDestino!: Traspaso[];
-
-  @OneToMany(() => MovimientoInventario, movimiento => movimiento.sucursal)
-  movimientos!: MovimientoInventario[];
 } 

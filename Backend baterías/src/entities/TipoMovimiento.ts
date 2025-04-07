@@ -10,7 +10,7 @@ export class TipoMovimiento {
     type: 'enum',
     enum: ['entrada', 'salida']
   })
-  tipo!: 'entrada' | 'salida';
+  tipo!: string;
 
   @OneToMany(() => MovimientoInventario, movimiento => movimiento.tipoMovimiento)
   movimientos!: MovimientoInventario[];

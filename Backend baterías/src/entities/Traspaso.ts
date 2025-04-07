@@ -7,7 +7,7 @@ export class Traspaso {
   @PrimaryGeneratedColumn()
   id_traspaso!: number;
 
-  @Column()
+  @Column({ type: 'datetime' })
   fecha!: Date;
 
   @Column()
@@ -24,7 +24,7 @@ export class Traspaso {
     enum: ['pendiente', 'completado', 'cancelado'],
     default: 'pendiente'
   })
-  estado!: 'pendiente' | 'completado' | 'cancelado';
+  estado!: string;
 
   @ManyToOne(() => Sucursal, sucursal => sucursal.traspasosOrigen)
   @JoinColumn({ name: 'id_sucursal_origen' })

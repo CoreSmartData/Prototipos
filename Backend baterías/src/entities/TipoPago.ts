@@ -6,8 +6,8 @@ export class TipoPago {
   @PrimaryGeneratedColumn()
   id_tipo_pago!: number;
 
-  @Column()
-  tipo_pago!: string;
+  @Column({ name: 'tipo_pago' })
+  tipo!: string;
 
   @OneToMany(() => Venta, venta => venta.tipoPago)
   ventas!: Venta[];

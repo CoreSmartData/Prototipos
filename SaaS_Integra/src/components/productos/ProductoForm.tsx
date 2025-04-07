@@ -9,14 +9,21 @@ import {
   updateProducto,
   Producto,
   UnidadMedida,
-  Categoria
+  Categoria,
+  ProductoCreate
 } from '../../services/productosService';
+import { getSucursales, Sucursal } from '../../services/sucursalesService';
 
 interface ProductoFormProps {
   producto?: Producto;
   onSuccess: () => void;
   onCancel: () => void;
 }
+
+type FormData = Omit<ProductoCreate, 'id_producto'> & {
+  stock_inicial: number;
+  id_sucursal?: number;
+};
 
 const schema = yup.object().shape({
   nombre: yup.string().required('El nombre es requerido'),
@@ -26,14 +33,18 @@ const schema = yup.object().shape({
   id_unidad: yup.number().required('La unidad es requerida'),
   id_categoria: yup.number().required('La categoría es requerida'),
   activo: yup.boolean().default(true),
-  sku: yup.string().required('El SKU es requerido'),
   stock_minimo: yup.number().required('El stock mínimo es requerido').min(0, 'El stock mínimo no puede ser negativo'),
-  numero_factura: yup.string()
+  stock_inicial: yup.number().min(0, 'El stock inicial no puede ser negativo').default(0),
+  id_sucursal: yup.number().test('sucursal-required', 'La sucursal es requerida cuando se especifica stock inicial', function(value) {
+    const stockInicial = this.parent.stock_inicial;
+    return !stockInicial || stockInicial <= 0 || (stockInicial > 0 && value !== undefined);
+  })
 });
 
 const ProductoForm: React.FC<ProductoFormProps> = ({ producto, onSuccess, onCancel }) => {
   const [unidades, setUnidades] = useState<UnidadMedida[]>([]);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
+  const [sucursales, setSucursales] = useState<Sucursal[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -41,9 +52,10 @@ const ProductoForm: React.FC<ProductoFormProps> = ({ producto, onSuccess, onCanc
     register,
     handleSubmit,
     formState: { errors },
-    reset
-  } = useForm({
-    resolver: yupResolver(schema),
+    reset,
+    watch
+  } = useForm<FormData>({
+    resolver: yupResolver(schema) as any,
     defaultValues: producto || {
       nombre: '',
       descripcion: '',
@@ -52,29 +64,32 @@ const ProductoForm: React.FC<ProductoFormProps> = ({ producto, onSuccess, onCanc
       id_unidad: undefined,
       id_categoria: undefined,
       activo: true,
-      sku: '',
       stock_minimo: 0,
-      numero_factura: ''
+      stock_inicial: 0,
+      id_sucursal: undefined
     }
   });
+
+  const stockInicial = watch('stock_inicial') || 0;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
-        const [unidadesData, categoriasData] = await Promise.all([
+        const [unidadesData, categoriasData, sucursalesData] = await Promise.all([
           getUnidadesMedida(),
-          getCategorias()
+          getCategorias(),
+          getSucursales()
         ]);
         
-        console.log('Datos de unidades obtenidos del servidor:', unidadesData);
         setUnidades(unidadesData);
         setCategorias(categoriasData);
+        setSucursales(sucursalesData);
         
       } catch (err) {
-        console.error('Error detallado al obtener unidades:', err);
-        setError('No se pudo conectar con el servidor. Por favor, verifica que el servidor backend esté corriendo en http://localhost:3000');
+        console.error('Error al obtener datos:', err);
+        setError('No se pudo conectar con el servidor. Por favor, verifica que el servidor backend esté corriendo.');
       } finally {
         setLoading(false);
       }
@@ -83,7 +98,7 @@ const ProductoForm: React.FC<ProductoFormProps> = ({ producto, onSuccess, onCanc
     fetchData();
   }, []);
 
-  const onSubmit = async (data: Omit<Producto, 'id_producto'>) => {
+  const onSubmit = async (data: FormData) => {
     try {
       setLoading(true);
       setError(null);
@@ -94,14 +109,24 @@ const ProductoForm: React.FC<ProductoFormProps> = ({ producto, onSuccess, onCanc
         await createProducto(data);
       }
 
+      reset();
       onSuccess();
-    } catch (err) {
-      setError('Error al guardar el producto');
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.message || 'Error al guardar el producto';
+      setError(errorMessage);
       console.error('Error saving producto:', err);
     } finally {
       setLoading(false);
     }
   };
+
+  if (loading && !error) {
+    return (
+      <div className="flex justify-center items-center h-48">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -119,21 +144,6 @@ const ProductoForm: React.FC<ProductoFormProps> = ({ producto, onSuccess, onCanc
           </div>
         </div>
       )}
-      {loading && (
-        <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <svg className="animate-spin h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-            </div>
-            <div className="ml-3">
-              <p className="text-sm text-blue-700">Cargando datos...</p>
-            </div>
-          </div>
-        </div>
-      )}
 
       <div className="grid grid-cols-2 gap-4">
         <div>
@@ -147,13 +157,14 @@ const ProductoForm: React.FC<ProductoFormProps> = ({ producto, onSuccess, onCanc
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">SKU</label>
+          <label className="block text-sm font-medium text-gray-700">Precio de Venta</label>
           <input
-            type="text"
-            {...register('sku')}
+            type="number"
+            step="0.01"
+            {...register('precio_venta')}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
           />
-          {errors.sku && <p className="mt-1 text-sm text-red-500">{errors.sku.message}</p>}
+          {errors.precio_venta && <p className="mt-1 text-sm text-red-500">{errors.precio_venta.message}</p>}
         </div>
       </div>
 
@@ -168,17 +179,6 @@ const ProductoForm: React.FC<ProductoFormProps> = ({ producto, onSuccess, onCanc
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Precio de Venta</label>
-          <input
-            type="number"
-            step="0.01"
-            {...register('precio_venta')}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-          />
-          {errors.precio_venta && <p className="mt-1 text-sm text-red-500">{errors.precio_venta.message}</p>}
-        </div>
-
-        <div>
           <label className="block text-sm font-medium text-gray-700">Costo</label>
           <input
             type="number"
@@ -188,16 +188,46 @@ const ProductoForm: React.FC<ProductoFormProps> = ({ producto, onSuccess, onCanc
           />
           {errors.costo && <p className="mt-1 text-sm text-red-500">{errors.costo.message}</p>}
         </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Stock Mínimo</label>
+          <input
+            type="number"
+            {...register('stock_minimo')}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+          />
+          {errors.stock_minimo && <p className="mt-1 text-sm text-red-500">{errors.stock_minimo.message}</p>}
+        </div>
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Stock Mínimo</label>
-        <input
-          type="number"
-          {...register('stock_minimo')}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-        />
-        {errors.stock_minimo && <p className="mt-1 text-sm text-red-500">{errors.stock_minimo.message}</p>}
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Stock Inicial</label>
+          <input
+            type="number"
+            {...register('stock_inicial')}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+          />
+          {errors.stock_inicial && <p className="mt-1 text-sm text-red-500">{errors.stock_inicial.message}</p>}
+        </div>
+
+        {stockInicial > 0 && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Sucursal</label>
+            <select
+              {...register('id_sucursal')}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+            >
+              <option value="">Seleccione una sucursal</option>
+              {sucursales.map((sucursal) => (
+                <option key={sucursal.id_sucursal} value={sucursal.id_sucursal}>
+                  {sucursal.nombre}
+                </option>
+              ))}
+            </select>
+            {errors.id_sucursal && <p className="mt-1 text-sm text-red-500">{errors.id_sucursal.message}</p>}
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-2 gap-4">
@@ -226,22 +256,12 @@ const ProductoForm: React.FC<ProductoFormProps> = ({ producto, onSuccess, onCanc
             <option value="">Seleccione una categoría</option>
             {categorias.map((categoria) => (
               <option key={categoria.id_categoria} value={categoria.id_categoria}>
-                {categoria.nombre_categoria}
+                {categoria.nombre}
               </option>
             ))}
           </select>
           {errors.id_categoria && <p className="mt-1 text-sm text-red-500">{errors.id_categoria.message}</p>}
         </div>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Número de Factura</label>
-        <input
-          type="text"
-          {...register('numero_factura')}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-        />
-        {errors.numero_factura && <p className="mt-1 text-sm text-red-500">{errors.numero_factura.message}</p>}
       </div>
 
       <div className="flex items-center">

@@ -29,7 +29,7 @@ export class Producto {
   @Column()
   id_categoria!: number;
 
-  @Column({ default: true })
+  @Column({ type: 'tinyint', default: 1 })
   activo!: boolean;
 
   @Column('decimal', { precision: 10, scale: 2, default: 0 })

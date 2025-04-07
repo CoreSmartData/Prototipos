@@ -33,7 +33,7 @@ export const createCategoria = async (req: Request, res: Response, next: NextFun
     const { nombre_categoria } = req.body;
 
     const categoria = categoriaRepository.create({
-      nombre_categoria
+      nombre: nombre_categoria
     });
 
     await categoriaRepository.save(categoria);
@@ -53,7 +53,7 @@ export const updateCategoria = async (req: Request, res: Response, next: NextFun
     }
 
     categoriaRepository.merge(categoria, {
-      nombre_categoria
+      nombre: nombre_categoria
     });
 
     const results = await categoriaRepository.save(categoria);

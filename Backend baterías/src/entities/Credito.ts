@@ -20,10 +20,10 @@ export class Credito {
   @Column('decimal', { precision: 10, scale: 2 })
   saldo_pendiente!: number;
 
-  @Column()
+  @Column({ type: 'datetime' })
   fecha_inicio!: Date;
 
-  @Column()
+  @Column({ type: 'datetime' })
   fecha_vencimiento!: Date;
 
   @ManyToOne(() => Cliente, cliente => cliente.creditos)

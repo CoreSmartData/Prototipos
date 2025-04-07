@@ -23,10 +23,10 @@ export class MovimientoInventario {
   @Column()
   cantidad!: number;
 
-  @Column({ length: 100, nullable: true })
+  @Column({ nullable: true, length: 100 })
   referencia!: string;
 
-  @Column('text', { nullable: true })
+  @Column({ type: 'text', nullable: true })
   observaciones!: string;
 
   @ManyToOne(() => Producto, producto => producto.movimientos)

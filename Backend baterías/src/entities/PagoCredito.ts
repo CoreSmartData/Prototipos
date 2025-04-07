@@ -18,7 +18,7 @@ export class PagoCredito {
   @Column({ length: 50 })
   metodo_pago!: string;
 
-  @Column('text', { nullable: true })
+  @Column({ type: 'text', nullable: true })
   observaciones!: string;
 
   @ManyToOne(() => Credito, credito => credito.pagos)

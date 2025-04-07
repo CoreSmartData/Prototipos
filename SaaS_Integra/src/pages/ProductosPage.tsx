@@ -8,7 +8,7 @@ const ProductosPage: React.FC = () => {
   const [showForm, setShowForm] = useState(false);
   const [showInventarioForm, setShowInventarioForm] = useState(false);
   const [selectedProducto, setSelectedProducto] = useState<Producto | undefined>();
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [message, setMessage] = useState<{ type: 'success' | 'error' | 'info'; text: string } | null>(null);
 
   const handleEdit = (producto: Producto) => {
     setSelectedProducto(producto);
@@ -20,12 +20,19 @@ const ProductosPage: React.FC = () => {
     setShowInventarioForm(true);
   };
 
-  const handleSuccess = () => {
+  const handleSuccess = (text?: string) => {
     setShowForm(false);
     setShowInventarioForm(false);
     setSelectedProducto(undefined);
-    setMessage({ type: 'success', text: 'Operación realizada exitosamente' });
+    setMessage({ type: 'success', text: text || 'Operación realizada exitosamente' });
     setTimeout(() => setMessage(null), 3000);
+  };
+
+  const handleMessage = (newMessage: { type: 'success' | 'error' | 'info'; text: string }) => {
+    setMessage(newMessage);
+    if (newMessage.type === 'success') {
+      setTimeout(() => setMessage(null), 3000);
+    }
   };
 
   const handleCancel = () => {
@@ -51,7 +58,7 @@ const ProductosPage: React.FC = () => {
       {message && (
         <div
           className={`mb-4 p-4 rounded-md ${
-            message.type === 'success' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'
+            message.type === 'success' ? 'bg-green-50 text-green-800' : message.type === 'error' ? 'bg-red-50 text-red-800' : 'bg-yellow-50 text-yellow-800'
           }`}
         >
           {message.text}
@@ -65,7 +72,10 @@ const ProductosPage: React.FC = () => {
           </h2>
           <ProductoForm
             producto={selectedProducto}
-            onSuccess={handleSuccess}
+            onSuccess={() => handleSuccess(selectedProducto 
+              ? `El producto "${selectedProducto.nombre}" ha sido actualizado exitosamente`
+              : 'El producto ha sido creado exitosamente'
+            )}
             onCancel={handleCancel}
           />
         </div>
@@ -74,7 +84,7 @@ const ProductosPage: React.FC = () => {
           <h2 className="text-xl font-semibold mb-4">Gestionar Inventario</h2>
           <InventarioForm
             producto={selectedProducto}
-            onSuccess={handleSuccess}
+            onSuccess={() => handleSuccess(`El inventario de "${selectedProducto.nombre}" ha sido actualizado exitosamente`)}
             onCancel={handleCancel}
           />
         </div>
@@ -83,6 +93,7 @@ const ProductosPage: React.FC = () => {
           <ProductosList 
             onEdit={handleEdit} 
             onInventario={handleInventario}
+            onMessage={handleMessage}
           />
         </div>
       )}

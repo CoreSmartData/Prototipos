@@ -16,7 +16,7 @@ export class Venta {
   @Column()
   id_sucursal!: number;
 
-  @Column()
+  @Column({ type: 'datetime' })
   fecha!: Date;
 
   @Column('decimal', { precision: 10, scale: 2 })

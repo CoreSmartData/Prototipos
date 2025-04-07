@@ -33,7 +33,7 @@ export const createTipoPago = async (req: Request, res: Response, next: NextFunc
     const { tipo_pago } = req.body;
 
     const tipoPago = tipoPagoRepository.create({
-      tipo_pago
+      tipo: tipo_pago
     });
 
     await tipoPagoRepository.save(tipoPago);
@@ -53,7 +53,7 @@ export const updateTipoPago = async (req: Request, res: Response, next: NextFunc
     }
 
     tipoPagoRepository.merge(tipoPago, {
-      tipo_pago
+      tipo: tipo_pago
     });
 
     const results = await tipoPagoRepository.save(tipoPago);
